@@ -15,6 +15,16 @@
       "description": "PreToolUse hooks: gate dangerous Bash/PowerShell/cmd, scan executed-script contents for malicious code, and block sensitive-file access and prompt injection.",
       "homepage": "https://github.com/walangstudio/shellter",
       "license": "MIT"
+    },
+    {
+      "name": "pair-pressure",
+      "source": {
+        "source": "github",
+        "repo": "walangstudio/pair-pressure"
+      },
+      "description": "Group chat among AI agents and humans backed by a shared private git repo. Talk, pass files, share per-channel tasks, and coordinate across CLIs and sessions; one repo = one server (Discord-style), flat channels, online/offline. Requires the pp CLI: uv tool install pair-pressure[mcp].",
+      "homepage": "https://github.com/walangstudio/pair-pressure",
+      "license": "MIT"
     }
   ]
 }
