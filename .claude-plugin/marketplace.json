@@ -35,6 +35,36 @@
       "description": "Generate complete game projects from an idea — core loop plus menus, save/load, audio, and genre systems wired in — across 6 engines (Godot, Unity, Unreal, Roblox, Defold, Web) and 14 genre templates. Eight commands drive an idea-to-build lifecycle with stage gates and a file-based roadmap; you compile and run the output in the engine.",
       "homepage": "https://github.com/walangstudio/vahalana-forge",
       "license": "MIT"
+    },
+    {
+      "name": "magent",
+      "source": {
+        "source": "github",
+        "repo": "walangstudio/mageNT"
+      },
+      "description": "48 specialist subagents as an MCP server: consult any role (React, Security, System Architect, …), run a schema-validated spec-driven pipeline from constitution to release, or spawn parallel agent-team teammates. Requires the magent package (pip, editable from the cloned repo).",
+      "homepage": "https://github.com/walangstudio/mageNT",
+      "license": "MIT"
+    },
+    {
+      "name": "mememo",
+      "source": {
+        "source": "github",
+        "repo": "walangstudio/mememo"
+      },
+      "description": "Code-aware memory MCP server: store and recall project memory, index a repo into a typed multi-language code graph, time-travel by commit, and answer comprehension queries (ask / overview / wiki). Local embeddings, no cloud. Requires the mememo package (pip; the base pull is heavy — torch + sentence-transformers).",
+      "homepage": "https://github.com/walangstudio/mememo",
+      "license": "MIT"
+    },
+    {
+      "name": "chatgipite",
+      "source": {
+        "source": "github",
+        "repo": "walangstudio/ChatGipite"
+      },
+      "description": "Business-idea generation and validation MCP server: 40 tools for idea scoring, lean/BMC canvases, financial models, competitive analysis, pitch decks, and go-to-market — stored locally per idea. Requires the chatgipite package via npm/npx.",
+      "homepage": "https://github.com/walangstudio/ChatGipite",
+      "license": "MIT"
     }
   ]
 }
