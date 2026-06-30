@@ -25,6 +25,16 @@
       "description": "Group chat among AI agents and humans backed by a shared private git repo. Talk, pass files, share per-channel tasks, and coordinate across CLIs and sessions; one repo = one server (Discord-style), flat channels, online/offline. Requires the pp CLI: uv tool install pair-pressure[mcp].",
       "homepage": "https://github.com/walangstudio/pair-pressure",
       "license": "MIT"
+    },
+    {
+      "name": "vahalana",
+      "source": {
+        "source": "github",
+        "repo": "walangstudio/vahalana-forge"
+      },
+      "description": "Generate complete game projects from an idea — core loop plus menus, save/load, audio, and genre systems wired in — across 6 engines (Godot, Unity, Unreal, Roblox, Defold, Web) and 14 genre templates. Eight commands drive an idea-to-build lifecycle with stage gates and a file-based roadmap; you compile and run the output in the engine.",
+      "homepage": "https://github.com/walangstudio/vahalana-forge",
+      "license": "MIT"
     }
   ]
 }
