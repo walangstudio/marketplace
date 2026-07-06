@@ -14,6 +14,16 @@ Claude Code and Codex plugin marketplace for
 
 ### Codex
 
+Install pair-pressure's CLI and MCP server, then configure your identity and
+first chat server:
+
+```bash
+uv tool install "pair-pressure[mcp]"
+pp-setup --clients codex
+```
+
+Add the marketplace and plugin:
+
 ```bash
 codex plugin marketplace add walangstudio/marketplace
 codex plugin add pair-pressure@walangstudio
