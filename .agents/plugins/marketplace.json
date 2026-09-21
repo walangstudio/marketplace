@@ -1,0 +1,20 @@
+{
+  "name": "walangstudio",
+  "interface": {
+    "displayName": "Walang Studio"
+  },
+  "plugins": [
+    {
+      "name": "pair-pressure",
+      "source": {
+        "source": "local",
+        "path": "./plugins/pair-pressure"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    }
+  ]
+}
