@@ -50,10 +50,10 @@
       "name": "mememo",
       "source": {
         "source": "github",
-        "repo": "walangstudio/mememo"
+        "repo": "walangstudio/mememo-code"
       },
-      "description": "Code-aware memory MCP server: store and recall project memory, index a repo into a typed multi-language code graph, time-travel by commit, and answer comprehension queries (ask / overview / wiki). Local embeddings, no cloud. Requires the mememo package (pip; the base pull is heavy — torch + sentence-transformers).",
-      "homepage": "https://github.com/walangstudio/mememo",
+      "description": "ARCHIVED mememo 1.x (repo walangstudio/mememo-code, read-only; mememo 2.0 lives at walangstudio/mememo). Code-aware memory MCP server: store and recall project memory, index a repo into a typed multi-language code graph, time-travel by commit, and answer comprehension queries (ask / overview / wiki). Local embeddings, no cloud. Requires the mememo package (pip; the base pull is heavy — torch + sentence-transformers).",
+      "homepage": "https://github.com/walangstudio/mememo-code",
       "license": "MIT"
     },
     {
