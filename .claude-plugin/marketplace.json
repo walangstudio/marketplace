@@ -65,6 +65,16 @@
       "description": "Business-idea generation and validation MCP server: 40 tools for idea scoring, lean/BMC canvases, financial models, competitive analysis, pitch decks, and go-to-market — stored locally per idea. Requires the chatgipite package via npm/npx.",
       "homepage": "https://github.com/walangstudio/ChatGipite",
       "license": "MIT"
+    },
+    {
+      "name": "psst",
+      "source": {
+        "source": "github",
+        "repo": "walangstudio/psst"
+      },
+      "description": "Please Send Smarter Thoughts: ask Sonnet, Haiku, Opus, or Fable one question from inside any session without switching models. /s /h /o /f (or /sonnet /haiku /opus /fable); tagged, short replies, and noisy work runs in a subagent so the session never compacts.",
+      "homepage": "https://github.com/walangstudio/psst",
+      "license": "MIT"
     }
   ]
 }
