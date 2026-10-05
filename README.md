@@ -14,6 +14,7 @@ Claude Code plugin marketplace for [Walang Studio](https://github.com/walangstud
 | Plugin | What it does |
 | --- | --- |
 | [shellter](https://github.com/walangstudio/shellter) | PreToolUse security hooks: gate dangerous Bash/PowerShell/cmd, scan executed-script contents, block sensitive-file access and prompt injection. |
+| [psst](https://github.com/walangstudio/psst) | Ask another Claude model one question without leaving your session: `/s` `/h` `/o` `/f`. |
 
 ## Add a plugin
 
