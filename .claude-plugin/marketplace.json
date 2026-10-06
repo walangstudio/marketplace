@@ -75,6 +75,16 @@
       "description": "Please Send Smarter Thoughts: ask Sonnet, Haiku, Opus, or Fable one question from inside any session without switching models. /s /h /o /f (or /sonnet /haiku /opus /fable); tagged, short replies, and noisy work runs in a subagent so the session never compacts.",
       "homepage": "https://github.com/walangstudio/psst",
       "license": "MIT"
+    },
+    {
+      "name": "chatfish",
+      "source": {
+        "source": "github",
+        "repo": "walangstudio/chatfish"
+      },
+      "description": "A fake Twitch chat in a side pane that watches Claude work and talks back: regulars with personalities, an audience that comes and goes, /chatfish reply to chat with them. A mod: requires Claude Code 2.1.281+ with CLAUDE_CODE_ENABLE_FUNCTION_HOOKS=1.",
+      "homepage": "https://github.com/walangstudio/chatfish",
+      "license": "MIT"
     }
   ]
 }
