@@ -72,7 +72,7 @@
         "source": "github",
         "repo": "walangstudio/psst"
       },
-      "description": "Please Send Smarter Thoughts: ask Sonnet, Haiku, Opus, or Fable one question from inside any session without switching models. /s /h /o /f (or /sonnet /haiku /opus /fable); tagged, short replies, and noisy work runs in a subagent so the session never compacts.",
+      "description": "Please Send Smarter Thoughts: ask Sonnet, Haiku, Opus, or Fable one question from inside any session without switching models. /psst:psst <model> <message>, or /psst:s /psst:h /psst:o /psst:f (or /psst:sonnet /psst:haiku /psst:opus /psst:fable); tagged, short replies, and noisy work runs in a subagent so the session never compacts.",
       "homepage": "https://github.com/walangstudio/psst",
       "license": "MIT"
     },
