@@ -85,6 +85,16 @@
       "description": "A fake Twitch chat in a side pane that watches Claude work and talks back: regulars with personalities, an audience that comes and goes, /chatfish reply to chat with them. A mod: requires Claude Code 2.1.281+ with CLAUDE_CODE_ENABLE_FUNCTION_HOOKS=1.",
       "homepage": "https://github.com/walangstudio/chatfish",
       "license": "MIT"
+    },
+    {
+      "name": "chessus",
+      "source": {
+        "source": "github",
+        "repo": "walangstudio/chessus"
+      },
+      "description": "Chess in a side pane: play Claude at any model and effort, watch two models play each other, run round-robin tournaments with a budget cap, and replay famous games or ones you search online. A mod: requires Claude Code 2.1.291+ with CLAUDE_CODE_ENABLE_FUNCTION_HOOKS=1.",
+      "homepage": "https://github.com/walangstudio/chessus",
+      "license": "MIT"
     }
   ]
 }
