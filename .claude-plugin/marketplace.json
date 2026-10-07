@@ -95,6 +95,16 @@
       "description": "Chess in a side pane: play Claude at any model and effort, watch two models play each other, run round-robin tournaments with a budget cap, and replay famous games or ones you search online. A mod: requires Claude Code 2.1.291+ with CLAUDE_CODE_ENABLE_FUNCTION_HOOKS=1.",
       "homepage": "https://github.com/walangstudio/chessus",
       "license": "MIT"
+    },
+    {
+      "name": "conclaude",
+      "source": {
+        "source": "github",
+        "repo": "walangstudio/conclaude"
+      },
+      "description": "conClaude: a side pane listing every prompt you sent, with a one-line Haiku TL;DR of each answer. Press a prompt to jump back to it in the transcript. Sessions autosave and come back on resume. A mod: requires Claude Code 2.1.292+ with CLAUDE_CODE_ENABLE_FUNCTION_HOOKS=1.",
+      "homepage": "https://github.com/walangstudio/conclaude",
+      "license": "MIT"
     }
   ]
 }
