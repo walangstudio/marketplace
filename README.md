@@ -43,6 +43,7 @@ live under `plugins/`. The Claude catalog remains in
 | [psst](https://github.com/walangstudio/psst) | Ask another Claude model one question without leaving your session: `/s` `/h` `/o` `/f`. |
 | [chatfish](https://github.com/walangstudio/chatfish) | Fake Twitch chat pane that reacts to what Claude is doing and to your replies. Requires Claude Code 2.1.281+ with `CLAUDE_CODE_ENABLE_FUNCTION_HOOKS=1`. |
 | [chessus](https://github.com/walangstudio/chessus) | Chess in a side pane: play Claude at any model and effort, watch models play each other, run tournaments, replay famous games. Requires Claude Code 2.1.291+ with `CLAUDE_CODE_ENABLE_FUNCTION_HOOKS=1`. |
+| [conClaude](https://github.com/walangstudio/conclaude) | Side pane of every prompt you sent with a Haiku TL;DR of each answer; press one to jump back to it. Requires Claude Code 2.1.292+ with `CLAUDE_CODE_ENABLE_FUNCTION_HOOKS=1`. |
 
 ## Add a plugin
 
