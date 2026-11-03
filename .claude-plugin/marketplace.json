@@ -105,6 +105,16 @@
       "description": "conClaude: a side pane listing every prompt you sent, with a one-line Haiku TL;DR of each answer. Press a prompt to jump back to it in the transcript. Sessions autosave and come back on resume. A mod: requires Claude Code 2.1.292+ with CLAUDE_CODE_ENABLE_FUNCTION_HOOKS=1.",
       "homepage": "https://github.com/walangstudio/conclaude",
       "license": "MIT"
+    },
+    {
+      "name": "whileYouWait",
+      "source": {
+        "source": "github",
+        "repo": "walangstudio/whileYouWait"
+      },
+      "description": "Gated worker/judge loop: one agent improves code in rounds, a separate judge scores each round against sealed checks the worker can't alter, and only verified improvements are kept on a branch you merge. /whileYouWait:init, then /whileYouWait:go <goal>. Requires Node 18+ and git.",
+      "homepage": "https://github.com/walangstudio/whileYouWait",
+      "license": "MIT"
     }
   ]
 }
