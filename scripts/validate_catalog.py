@@ -40,7 +40,9 @@ def main() -> None:
         )
         assert manifest["name"] == name
         assert (plugin_root / manifest["skills"]).is_dir()
-        mcp_servers = manifest["mcpServers"]
+        mcp_servers = manifest.get("mcpServers")
+        if mcp_servers is None:
+            continue
         if isinstance(mcp_servers, str):
             assert (plugin_root / mcp_servers).is_file()
         else:

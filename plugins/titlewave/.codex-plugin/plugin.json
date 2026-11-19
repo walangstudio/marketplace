@@ -1,0 +1,18 @@
+{
+  "name": "titlewave",
+  "version": "0.1.0",
+  "description": "Rename coding-agent sessions without a model call.",
+  "author": { "name": "walangstudio" },
+  "homepage": "https://github.com/walangstudio/titlewave",
+  "repository": "https://github.com/walangstudio/titlewave",
+  "license": "MIT",
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Titlewave",
+    "shortDescription": "Make waves with better session titles.",
+    "developerName": "Walang Studio",
+    "category": "Productivity",
+    "capabilities": ["Write"],
+    "defaultPrompt": ["Rename this session to a name I choose."]
+  }
+}

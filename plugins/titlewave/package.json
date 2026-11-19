@@ -1,0 +1,19 @@
+{
+  "name": "titlewave",
+  "version": "0.1.0",
+  "description": "Make waves with better coding-agent session titles.",
+  "type": "module",
+  "license": "MIT",
+  "author": "walangstudio",
+  "repository": "github:walangstudio/titlewave",
+  "engines": { "node": ">=22" },
+  "bin": { "titlewave": "bin/titlewave.mjs" },
+  "scripts": {
+    "build": "node scripts/check.mjs",
+    "test": "node --test test/*.test.mjs",
+    "test:integration": "node test/integration.mjs"
+  },
+  "keywords": ["sessions", "rename", "codex", "claude", "pi-package"],
+  "pi": { "extensions": ["./extensions/pi.mjs"], "skills": [] },
+  "files": ["bin", "lib", "extensions", "skills", "hooks", ".claude-plugin", ".codex-plugin", "gemini-extension.json", "GEMINI.md", "cc-title-statusline.sh", "README.md", "CHANGELOG.md", "LICENSE"]
+}
