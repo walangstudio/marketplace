@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.1.1 - 2026-11-19
+
+- Verify Ghostty on Linux X11 and native Wayland inside Docker.
+- Add real desktop-title checks for foot, GNOME Terminal, Konsole, Xfce Terminal, and Terminator.
+- Document Ghostty's fixed-title restriction and Konsole's `%w` tab-title requirement.
+- Run the additional desktop-terminal container suite in CI without host display access or elevated container privileges.
+- Allow cold agent RPC startup more time on loaded machines while retaining shorter deadlines for later requests.
+
 ## 0.1.0 - 2026-11-19
 
 - Rename session-rename to titlewave.

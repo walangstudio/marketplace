@@ -39,7 +39,7 @@ export async function withRpc(command, args, action, dialect = 'codex') {
   const notify = (method, params) => child.stdin.write(`${JSON.stringify({ method, ...(params && { params }) })}\n`);
   const request = (method, params = {}) => new Promise((resolve, reject) => {
     const id = String(++sequence);
-    const timer = setTimeout(() => { pending.delete(id); reject(new Error(`${method} timed out`)); }, 15000);
+    const timer = setTimeout(() => { pending.delete(id); reject(new Error(`${method} timed out`)); }, sequence === 1 ? 60000 : 15000);
     pending.set(id, { resolve, reject, timer });
     child.stdin.write(`${JSON.stringify(dialect === 'pi' ? { id, type: method, ...params } : { id, method, params })}\n`);
   });

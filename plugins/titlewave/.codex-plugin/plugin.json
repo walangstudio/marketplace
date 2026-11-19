@@ -1,6 +1,6 @@
 {
   "name": "titlewave",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Rename coding-agent sessions without a model call.",
   "author": { "name": "walangstudio" },
   "homepage": "https://github.com/walangstudio/titlewave",

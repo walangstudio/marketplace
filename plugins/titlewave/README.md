@@ -1,6 +1,6 @@
 # titlewave
 
-![tests](https://img.shields.io/badge/tests-27%20passing-brightgreen) ![version](https://img.shields.io/badge/version-0.1.0-blue)
+![tests](https://img.shields.io/badge/tests-27%20passing-brightgreen) ![version](https://img.shields.io/badge/version-0.1.1-blue)
 
 titlewave makes waves with better coding-agent session titles.
 
@@ -176,6 +176,12 @@ which layer to label; clear the outer context or omit `--terminal`.
 | xterm | 379 | Real X11 title from OSC 2 sent to the controlling TTY |
 | rxvt-unicode | 9.30 | Real X11 title from OSC 2 |
 | Alacritty | 0.11.0 | Real X11 title from OSC 2 |
+| Ghostty | 1.4.0-arch1 | Linux X11 window title and native Wayland compositor title from OSC 2 |
+| foot | 1.28.0 | Native Wayland title read back through Sway IPC |
+| GNOME Terminal | 3.60.0 | Real X11 window title from OSC 2 |
+| Konsole | 26.08.3 | Real X11 title with the tab-title format set to `%w` |
+| Xfce Terminal | 1.2.0 | Real X11 window title from OSC 2 |
+| Terminator | 2.1.6 | Real X11 window title from OSC 2 |
 | Herdr | 0.9.4-preview.2026-10-14-fbd2ae23927f | Native Windows pane label read back through `pane get` |
 | WezTerm | 20240203-110809-5046fc22 | Native Windows tab label read back through `cli list` |
 | Windows console | Windows 10.0.26300 | OSC 2 sent through `CONOUT$`, read back through the console title API |
@@ -183,12 +189,27 @@ which layer to label; clear the outer context or omit `--terminal`.
 X11 checks run real emulators under Xvfb and query their window titles, rather
 than just comparing emitted bytes. `python3 test/terminals.py` reproduces them.
 The test creates and closes only its own processes.
+The six newer Linux terminals are installed and tested entirely inside the
+separate `test/desktop.Dockerfile` image. Its eight checks run as an unprivileged
+container user: X11 window queries, native Wayland titles through a headless
+Sway compositor, and a negative check for Ghostty's fixed-title setting. No host
+terminal applications, display sockets, GPU devices, or privileged container
+access are required. Exact installed versions and observed titles are written
+to `.evidence/desktop-terminals.json` inside the container.
+
+Ghostty's `title` configuration must be unset; a fixed value deliberately
+ignores application title changes. Konsole's tab-title format must contain
+`%w` (the title supplied by the shell). The test applies that setting to its own
+temporary Konsole process, without changing a saved profile. A shell prompt or
+agent can replace an OSC title later. These checks establish Linux support;
+Ghostty on macOS has not been tested.
+
 `powershell -NoProfile -File test/windows.ps1` checks running Herdr and WezTerm
 servers using temporary panes. The Windows console check uses its own hidden
 PowerShell console; it does not establish Windows Terminal tab compatibility.
 
 Other OSC-capable terminals may work, but are not listed as verified. macOS
-terminals, Windows Terminal tabs, Ghostty, foot, and Rex have not been exercised here. Unsupported or
+terminals, Windows Terminal tabs, and Rex have not been exercised here. Unsupported or
 unavailable terminal control reports an error; `--terminal` still preserves a
 successful saved-session rename. A standalone `terminal` failure exits nonzero.
 
@@ -212,6 +233,19 @@ Build it with `docker build -f test/Dockerfile -t titlewave-test .`, then run
 `docker run --rm --init titlewave-test`. GUI tests use software rendering under Xvfb.
 No real credentials or user conversation directories are mounted.
 
+For Ghostty and the other desktop terminals:
+
+```bash
+docker build -f test/desktop.Dockerfile -t titlewave-desktop-test .
+docker run --rm --init --memory=3g --cpus=3 titlewave-desktop-test
+```
+
+This second image uses a pinned Arch Linux base and the signed 2026-11-18 Arch
+Linux Archive snapshot. Installed versions and observed titles are also printed
+in the CI log. CI runs both container suites. Keep terminal
+installation and execution inside these images; the Windows checks above record
+the earlier native-host verification and are not needed for the Docker suites.
+
 Layout: `bin/` is the CLI, `lib/` contains agent and terminal adapters, `skills/`
 is the portable procedure, `extensions/pi.mjs` uses Pi's in-process API, and
 `hooks/` supplies Claude's session identity. `.claude-plugin/` and
@@ -230,6 +264,8 @@ repository; paths to those files in this README refer to a source checkout.
 - [Pi RPC commands](https://github.com/earendil-works/pi/blob/main/packages/coding-agent/docs/rpc-commands.md)
 - [Goose session management](https://github.com/aaif-goose/goose/blob/main/documentation/docs/guides/sessions/session-management.md)
 - [Gemini session recording at the tested release](https://github.com/google-gemini/gemini-cli/blob/v0.69.0/packages/core/src/services/chatRecordingService.ts)
+- [Ghostty title configuration](https://ghostty.org/docs/config/reference#title)
+- [Konsole tab-title formats](https://docs.kde.org/stable_kf6/en/konsole/konsole/console-dialogs.html)
 
 ## License
 
