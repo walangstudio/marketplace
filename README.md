@@ -27,7 +27,10 @@ Add the marketplace and plugin:
 ```bash
 codex plugin marketplace add walangstudio/marketplace
 codex plugin add pair-pressure@walangstudio
+codex plugin add delulint@walangstudio
 ```
+
+delulint needs only Node 22+ and git.
 
 Start a new Codex thread after installing or upgrading a plugin. Codex entries
 live under `.agents/plugins/marketplace.json`; their local wrapper packages
@@ -46,6 +49,7 @@ live under `plugins/`. The Claude catalog remains in
 | [chessus](https://github.com/walangstudio/chessus) | Chess in a side pane: play Claude at any model and effort, watch models play each other, run tournaments, replay famous games. Requires Claude Code 2.1.291+ with `CLAUDE_CODE_ENABLE_FUNCTION_HOOKS=1`. |
 | [conClaude](https://github.com/walangstudio/conclaude) | Side pane of every prompt you sent with a Haiku TL;DR of each answer; press one to jump back to it. Requires Claude Code 2.1.292+ with `CLAUDE_CODE_ENABLE_FUNCTION_HOOKS=1`. |
 | [whileYouWait](https://github.com/walangstudio/whileYouWait) | Let an agent improve code in rounds against sealed checks it can't touch; only verified improvements are kept. Requires Node 18+ and git. |
+| [delulint](https://github.com/walangstudio/delulint) | Find notes, plans, and agent instructions that no longer match the code, prove each against git history, and archive what you approve. Claude Code and Codex. Requires Node 22+ and git. |
 
 ## Add a plugin
 
@@ -71,6 +75,7 @@ its wrapper and validate the catalog:
 
 ```bash
 python scripts/sync_pair_pressure.py ../pair-pressure
+python scripts/sync_delulint.py ../delulint
 python scripts/validate_catalog.py
 ```
 

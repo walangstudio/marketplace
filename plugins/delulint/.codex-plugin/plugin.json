@@ -1,0 +1,28 @@
+{
+  "name": "delulint",
+  "version": "0.1.1",
+  "description": "Find stale notes, plans, and agent instructions that no longer match the code.",
+  "author": { "name": "walangstudio" },
+  "homepage": "https://github.com/walangstudio/delulint",
+  "repository": "https://github.com/walangstudio/delulint",
+  "license": "MIT",
+  "skills": "./skills/",
+  "hooks": {
+    "hooks": {
+      "PreToolUse": [
+        {
+          "matcher": ".*",
+          "hooks": [{ "type": "command", "command": "node \"${PLUGIN_ROOT}/hooks/guard.mjs\"", "timeout": 10 }]
+        }
+      ]
+    }
+  },
+  "interface": {
+    "displayName": "delulint",
+    "shortDescription": "Lint your repo's delusions.",
+    "developerName": "Walang Studio",
+    "category": "Productivity",
+    "capabilities": ["Read", "Write"],
+    "defaultPrompt": ["Run delulint on this repo."]
+  }
+}

@@ -122,6 +122,16 @@
       "description": "Gated worker/judge loop: one agent improves code in rounds, a separate judge scores each round against sealed checks the worker can't alter, and only verified improvements are kept on a branch you merge. /whileYouWait:init, then /whileYouWait:go <goal>. Requires Node 18+ and git.",
       "homepage": "https://github.com/walangstudio/whileYouWait",
       "license": "MIT"
+    },
+    {
+      "name": "delulint",
+      "source": {
+        "source": "github",
+        "repo": "walangstudio/delulint"
+      },
+      "description": "Lint your repo's delusions: find notes, plans, specs, and agent instructions that no longer match the code, prove each against git history with an independent checker, and archive what you approve. A hook keeps agents out of the archive. Requires Node 22+ and git.",
+      "homepage": "https://github.com/walangstudio/delulint",
+      "license": "MIT"
     }
   ]
 }
