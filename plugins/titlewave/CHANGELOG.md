@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.1.2 - 2026-11-20
+
+- Verify Rio and Contour titles on Linux X11 and Wayland inside Docker on an Intel Mac.
+- Check Rio's fixed-title restriction and expand the desktop suite to 13 checks.
+- Document the distinction between Mac-hosted Linux containers and unverified native macOS terminals.
+
 ## 0.1.1 - 2026-11-19
 
 - Verify Ghostty on Linux X11 and native Wayland inside Docker.

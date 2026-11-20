@@ -1,6 +1,6 @@
 # titlewave
 
-![tests](https://img.shields.io/badge/tests-27%20passing-brightgreen) ![version](https://img.shields.io/badge/version-0.1.1-blue)
+![tests](https://img.shields.io/badge/tests-27%20passing-brightgreen) ![version](https://img.shields.io/badge/version-0.1.2-blue)
 
 titlewave makes waves with better coding-agent session titles.
 
@@ -182,6 +182,8 @@ which layer to label; clear the outer context or omit `--terminal`.
 | Konsole | 26.08.3 | Real X11 title with the tab-title format set to `%w` |
 | Xfce Terminal | 1.2.0 | Real X11 window title from OSC 2 |
 | Terminator | 2.1.6 | Real X11 window title from OSC 2 |
+| Rio | 0.5.32 (Arch -1) | Linux X11 window title and native Wayland compositor title from OSC 2 |
+| Contour | 0.7.0.8982 (Arch -2) | Linux X11 window title and native Wayland compositor title from OSC 2 |
 | Herdr | 0.9.4-preview.2026-10-14-fbd2ae23927f | Native Windows pane label read back through `pane get` |
 | WezTerm | 20240203-110809-5046fc22 | Native Windows tab label read back through `cli list` |
 | Windows console | Windows 10.0.26300 | OSC 2 sent through `CONOUT$`, read back through the console title API |
@@ -189,20 +191,26 @@ which layer to label; clear the outer context or omit `--terminal`.
 X11 checks run real emulators under Xvfb and query their window titles, rather
 than just comparing emitted bytes. `python3 test/terminals.py` reproduces them.
 The test creates and closes only its own processes.
-The six newer Linux terminals are installed and tested entirely inside the
-separate `test/desktop.Dockerfile` image. Its eight checks run as an unprivileged
+The eight newer Linux terminals are installed and tested entirely inside the
+separate `test/desktop.Dockerfile` image. Its 13 checks run as an unprivileged
 container user: X11 window queries, native Wayland titles through a headless
-Sway compositor, and a negative check for Ghostty's fixed-title setting. No host
+Sway compositor, and negative checks for Ghostty and Rio's fixed-title settings. No host
 terminal applications, display sockets, GPU devices, or privileged container
 access are required. Exact installed versions and observed titles are written
 to `.evidence/desktop-terminals.json` inside the container.
 
 Ghostty's `title` configuration must be unset; a fixed value deliberately
-ignores application title changes. Konsole's tab-title format must contain
+ignores application title changes. Rio's `--title` option also locks its title.
+Konsole's tab-title format must contain
 `%w` (the title supplied by the shell). The test applies that setting to its own
 temporary Konsole process, without changing a saved profile. A shell prompt or
 agent can replace an OSC title later. These checks establish Linux support;
 Ghostty on macOS has not been tested.
+
+The desktop suite also passed on an Intel Mac using Docker Desktop 4.40.0
+(Engine 28.0.4, Linux amd64). Terminal installation and execution stayed inside
+containers. This verifies Linux builds on a Mac-hosted engine; it does not verify
+native macOS builds, Terminal.app, or iTerm2.
 
 `powershell -NoProfile -File test/windows.ps1` checks running Herdr and WezTerm
 servers using temporary panes. The Windows console check uses its own hidden
@@ -266,6 +274,8 @@ repository; paths to those files in this README refer to a source checkout.
 - [Gemini session recording at the tested release](https://github.com/google-gemini/gemini-cli/blob/v0.69.0/packages/core/src/services/chatRecordingService.ts)
 - [Ghostty title configuration](https://ghostty.org/docs/config/reference#title)
 - [Konsole tab-title formats](https://docs.kde.org/stable_kf6/en/konsole/konsole/console-dialogs.html)
+- [Rio installation and platforms](https://rioterm.com/docs/install)
+- [Contour installation and platforms](https://contour-terminal.org/install/)
 
 ## License
 
