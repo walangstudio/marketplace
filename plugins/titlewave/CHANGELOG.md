@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.1.4 - 2026-11-20
+
+- Verify authenticated Gemini NLP for a visible terminal title and a separate closed session's saved summary in Mac-hosted Docker.
+- Scope the Claude SessionStart hook to its manifest so Gemini extensions do not execute it.
+- Add a regression check for the isolated hook and its exact session context.
+- Wait for Konsole's window to map before the desktop test sends its first title.
+- Preinstall the pinned OpenCode plugin SDK in the test image to avoid registry timeouts during integration startup.
+
 ## 0.1.3 - 2026-11-20
 
 - Verify natural-language saved-session renaming with real Claude, Codex, OpenCode, Pi, and Goose model turns.

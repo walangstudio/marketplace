@@ -1,6 +1,6 @@
 # titlewave
 
-![tests](https://img.shields.io/badge/tests-31%20passing-brightgreen) ![version](https://img.shields.io/badge/version-0.1.3-blue)
+![tests](https://img.shields.io/badge/tests-32%20passing-brightgreen) ![version](https://img.shields.io/badge/version-0.1.4-blue)
 
 titlewave makes waves with better coding-agent session titles.
 
@@ -167,9 +167,11 @@ JSON uses an atomic replacement. Never pass `--offline` for a running process.
 Legacy JSON preservation is covered by a regression check; the real CLI check
 uses its current JSONL format.
 
-Separate real NLP checks passed on 2026-11-20. Each sent
-`Rename this session to <unique title>` and verified the persisted title, rather
-than trusting the model's reply:
+Manual NLP checks ran on 2026-11-20. Claude, Codex, OpenCode, Pi, and Goose received
+`Rename this session to <unique title>` and their persisted titles were verified.
+Gemini's terminal and closed-session prompts are described below. Terminal-only
+checks queried the actual visible xterm window title. These authenticated model
+runs are separate from CI's model-free integration checks:
 
 | Agent | NLP-tested version and platform | Model | Result |
 | --- | --- | --- | --- |
@@ -178,13 +180,17 @@ than trusting the model's reply:
 | OpenCode | 1.17.11, Windows | NVIDIA Nemotron 3 Ultra | Context plugin and skill selected; server title confirmed |
 | Pi | 0.80.2, Windows | NVIDIA Nemotron 3 Ultra | Native tool selected; session metadata confirmed |
 | Goose | 1.60.1, Linux Docker | OpenRouter free router | Installed skill selected; saved session name confirmed |
-| Gemini CLI | 0.69.0 | Not run: no configured authentication | NLP unverified; live saved-session rename unsupported |
+| Gemini CLI | 0.69.0, Linux Docker on Intel Mac | Gemini 3.5 Flash-Lite | Installed skill selected; visible terminal title and a separate closed session's saved summary confirmed |
 
-The Codex terminal-only NLP check also queried a real xterm window and confirmed
-the saved conversation name stayed unset. This does not establish terminal NLP
-behavior for every agent. Gemini can label its terminal while running; its saved
-summary remains an explicit offline operation. A slash command does not remove
-that restriction. NLP selection depends on the model and available tools.
+The Codex terminal-only NLP check also confirmed the saved conversation name
+stayed unset. Gemini's authenticated check loaded the extension and skill and
+renamed a real xterm window from a workspace outside the plugin checkout. A
+second request renamed that closed session, preserved its existing transcript,
+and confirmed the new summary through `gemini --list-sessions`. These checks do
+not establish terminal NLP behavior for every agent. Gemini can label its
+terminal while running; its own live saved summary remains unsupported. Rename
+only an explicitly identified closed session with `--offline`. A slash command
+does not remove that restriction. NLP selection depends on the model and available tools.
 
 The Claude child disables hooks and excludes configured MCP servers so a rename
 does not replay SessionStart hooks or start unrelated tool servers.
