@@ -38,6 +38,7 @@ live under `plugins/`. The Claude catalog remains in
 
 | Plugin | What it does |
 | --- | --- |
+| [titlewave](https://github.com/walangstudio/titlewave) | Rename coding-agent sessions and label terminals. Claude Code and Codex marketplace packages; Pi package, Gemini extension, and manual adapters. Requires Node 22+. |
 | [shellter](https://github.com/walangstudio/shellter) | PreToolUse security hooks: gate dangerous Bash/PowerShell/cmd, scan executed-script contents, block sensitive-file access and prompt injection. |
 | [pair-pressure](https://github.com/walangstudio/pair-pressure) | Cross-CLI Git-backed group chat. Available for Claude Code and Codex; requires `pair-pressure[mcp]` on `PATH`. |
 | [psst](https://github.com/walangstudio/psst) | Ask another Claude model one question without leaving your session: `/s` `/h` `/o` `/f`. |
@@ -72,3 +73,7 @@ its wrapper and validate the catalog:
 python scripts/sync_pair_pressure.py ../pair-pressure
 python scripts/validate_catalog.py
 ```
+
+Titlewave includes its small Node runtime in the Codex package. Refresh it with
+`python scripts/sync_titlewave.py <titlewave-checkout>` before validating. Generated
+files under `plugins/titlewave/` must be refreshed through that script.
