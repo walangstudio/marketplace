@@ -1,6 +1,6 @@
 # delulint
 
-![tests](https://img.shields.io/badge/tests-9%20passing-brightgreen) ![version](https://img.shields.io/badge/version-0.1.0-blue)
+![tests](https://img.shields.io/badge/tests-9%20passing-brightgreen) ![version](https://img.shields.io/badge/version-0.1.1-blue)
 
 delulint lints your repo's delusions: the notes, plans, specs, and agent instructions that no longer match the code.
 
@@ -65,6 +65,8 @@ Start a fresh session for each new task. Long sessions keep every failed attempt
 npm run build
 npm test
 ```
+
+`bench/make-fixture.sh <dir>` builds a repo with 9 planted stale claims and 6 decoys; `bench/key.md` is the answer key. Claude Opus, Claude Sonnet, and Codex each find 9/9 with no false positives on it.
 
 ## License
 

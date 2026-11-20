@@ -12,7 +12,7 @@ Target repo: the path the user gave, else the current directory. Not a git repo:
 
 ## Ground rules
 - Report only. No edit, move, or delete before the user approves specific ids.
-- Proof or silence. A finding needs current code that contradicts it AND the commit that made it false. Otherwise drop it.
+- Proof or silence. A finding needs current code that contradicts it AND the commit that made it false, or the commit that wrote it wrong. Otherwise drop it.
 - Never judge your own findings. Phase 3 does that.
 - Never delete a file or a memory entry. Files move to `.archive/`. Memory entries get superseded or edited.
 - Skip `.archive/`, `.git/`, dependencies, build output, and generated files.
@@ -28,13 +28,22 @@ List candidate sources; do not read deeply yet:
 
 Print counts per source. More than about 40 sources: do one source type per pass and say which remain.
 
+While listing, note every spec or ticket file that has no status field. Those go straight to Untagged in Phase 4.
+
 ## Phase 2 - Extract claims
 From each source, pull statements that can be checked: a path exists, a command works, a thing is named X, feature Y is or is not built, bug N is open, a ticket has status S. Skip opinions, intent, and style rules.
 
 Record per claim: id, source `file:line` (or memory id), the verbatim quote, and kind: `descriptive`, `rule`, or `memory`.
 
+Split a sentence that makes two checkable statements into two claims. A file path named inside a plan is its own claim. Then add a neutral `check:` line saying what the quote asserts, so the checker tests the right thing:
+- A TODO, FIXME, or open ticket asserts its work is still pending: `check: still not done - <the work>`.
+- A plan or spec asserts it is still wanted and not yet built or dropped: `check: still planned - <the feature>`.
+- A rule asserts the code follows it: `check: code follows - <the rule>`.
+- Anything else asserts what the quote says.
+The `check:` line restates the quote; it never says what you suspect.
+
 ## Phase 3 - Verify independently
-Hand claims to a fresh checker in batches of up to 20. Its instructions are `SKILL_DIR/verifier.md`. Send ONLY the repo path and, per claim, the id, the verbatim quote, and its source location. Never send your suspicion, the kind, a guessed verdict, or any hint about what changed.
+Hand claims to a fresh checker in batches of up to 20. Its instructions are `SKILL_DIR/verifier.md`. Send ONLY the repo path and, per claim, the id, the verbatim quote, its `check:` line, and its source location. Never send your suspicion, the kind, a guessed verdict, or any hint about what changed.
 
 - Claude Code: spawn one general-purpose subagent per batch, in parallel. Prompt = the full text of `verifier.md`, then the repo path and the claims.
 - Codex: spawn a subagent the same way if subagents are available. Otherwise run one fresh read-only process per batch:
@@ -44,7 +53,7 @@ Hand claims to a fresh checker in batches of up to 20. Its instructions are `SKI
 - `descriptive` + FALSE: Outdated.
 - `rule` or `memory` + FALSE or DISAGREES: Conflict. Never call these outdated.
 - Any FALSE claim from a spec or ticket marked `in progress`: Conflict. The code may be half-built.
-- A spec or ticket with no status field: Untagged. Propose a status only from the checker's evidence.
+- Every spec or ticket noted in Phase 1 as having no status field: Untagged. Propose a status only from the checker's evidence.
 - TRUE or UNPROVEN: dropped. Report the count only.
 
 ## Phase 5 - Report, then stop

@@ -1,6 +1,6 @@
 {
   "name": "delulint",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Find stale notes, plans, and agent instructions that no longer match the code.",
   "author": { "name": "walangstudio" },
   "homepage": "https://github.com/walangstudio/delulint",
