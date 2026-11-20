@@ -16,6 +16,19 @@ export function terminalHost(env = process.env) {
   return 'osc';
 }
 
+function ancestorTty() {
+  let pid = process.ppid;
+  const seen = new Set();
+  try {
+    while (pid > 1 && !seen.has(pid)) {
+      seen.add(pid);
+      const [parent, tty] = execFileSync('/bin/ps', ['-p', String(pid), '-o', 'ppid=', '-o', 'tty='], { encoding: 'utf8', timeout: 1000, stdio: ['ignore', 'pipe', 'ignore'] }).trim().split(/\s+/);
+      if (/^(pts\/\d+|tty[\w]+)$/.test(tty || '')) return `/dev/${tty}`;
+      pid = Number(parent);
+    }
+  } catch {}
+}
+
 export function setTerminalTitle(name, env = process.env) {
   validateName(name);
   const run = (exe, args) => execFileSync(nativeCommand(exe), args, { encoding: 'utf8', timeout: 5000, windowsHide: true });
@@ -41,7 +54,14 @@ export function setTerminalTitle(name, env = process.env) {
       run('zellij', ['action', 'rename-pane', '--pane-id', env.ZELLIJ_PANE_ID, name]);
       break;
     case 'osc': {
-      const fd = openSync(process.platform === 'win32' ? '\\\\.\\CONOUT$' : '/dev/tty', 'w');
+      let fd;
+      try { fd = openSync(process.platform === 'win32' ? '\\\\.\\CONOUT$' : '/dev/tty', 'w'); }
+      catch (error) {
+        if (process.platform === 'win32' || !['ENXIO', 'ENODEV', 'ENOTTY', 'ENOENT'].includes(error.code)) throw error;
+        const tty = ancestorTty();
+        if (!tty) throw error;
+        fd = openSync(tty, 'w');
+      }
       try { writeSync(fd, `\x1b]2;${name}\x07`); } finally { closeSync(fd); }
       break;
     }

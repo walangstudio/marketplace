@@ -17,7 +17,8 @@ def main():
     files = [
         ".codex-plugin/plugin.json", "package.json", "bin/titlewave.mjs",
         "lib/agents.mjs", "lib/rpc.mjs", "lib/terminal.mjs",
-        "skills/titlewave/SKILL.md", "README.md", "LICENSE", "CHANGELOG.md",
+        "skills/titlewave/SKILL.md", "skills/titlewave/scripts/titlewave.mjs",
+        "README.md", "LICENSE", "CHANGELOG.md",
     ]
     for file in files:
         if not (source / file).is_file():

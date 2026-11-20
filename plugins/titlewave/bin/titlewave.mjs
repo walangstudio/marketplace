@@ -17,6 +17,7 @@ try {
   if (values.help) {
     console.log('titlewave <name> [--agent claude|codex|opencode|pi|goose|gemini] [--session ID]\n  --terminal       Also label the current terminal; never sends keystrokes\n  --url URL        OpenCode loopback server\n  --offline        Confirm the Pi/Gemini session is closed\n  --transcript FILE  Gemini session JSON\n  --dry-run        Print the request without starting any process\n  titlewave terminal <name>  Label only the current terminal');
   } else {
+    if (values.agent === '' || values.session === '') throw new Error('Saved renames require explicit --agent and --session values that are not empty.');
     const terminalOnly = positionals[0] === 'terminal' && positionals.length === 2;
     if (positionals.length !== (terminalOnly ? 2 : 1)) throw new Error('Usage: titlewave <name> [options]; titlewave --help');
     const name = validateName(positionals[terminalOnly ? 1 : 0]);

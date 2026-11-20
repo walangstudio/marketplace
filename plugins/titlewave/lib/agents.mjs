@@ -51,7 +51,7 @@ export async function renameSession({ agent, session, name, url, transcript, off
     case 'claude': {
       const env = { ...process.env };
       delete env.CLAUDECODE;
-      const output = execFileSync(nativeCommand('claude'), ['-p', '--strict-mcp-config', '--mcp-config', '{"mcpServers":{}}', '--settings', '{"disableAllHooks":true}', '--resume', session, `/rename ${name}`], { env, encoding: 'utf8', timeout: 30000, windowsHide: true });
+      const output = execFileSync(nativeCommand('claude'), ['-p', '--strict-mcp-config', '--mcp-config', '{"mcpServers":{}}', '--settings', '{"disableAllHooks":true}', '--resume', session, `/rename ${name}`], { env, encoding: 'utf8', timeout: 90000, killSignal: 'SIGKILL', windowsHide: true });
       if (!output.includes('Session renamed to:')) throw new Error(`Claude did not confirm the rename: ${output.trim()}`);
       break;
     }

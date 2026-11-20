@@ -1,11 +1,12 @@
 # titlewave
 
-![tests](https://img.shields.io/badge/tests-27%20passing-brightgreen) ![version](https://img.shields.io/badge/version-0.1.2-blue)
+![tests](https://img.shields.io/badge/tests-31%20passing-brightgreen) ![version](https://img.shields.io/badge/version-0.1.3-blue)
 
 titlewave makes waves with better coding-agent session titles.
 
 Ask your agent to "rename this session to Fix login", or run the CLI yourself.
-The saved name changes without a model call. Add `--terminal` to label the pane
+The rename operation itself needs no model call. A natural-language request uses
+the agent's normal model turn to select the skill or tool. Add `--terminal` to label the pane
 or tab too. Names stay literal, including spaces, quotes, and Unicode.
 
 Formerly session-rename. The old `lm-rename.sh` and `lm-rename.ps1` entry points
@@ -70,8 +71,8 @@ Goose:
 goose plugin install https://github.com/walangstudio/titlewave
 ```
 
-Goose 1.60.1 reads the portable skill from the Git-backed plugin. Use its session
-ID with the shared CLI; the actual rename uses `goose session rename`.
+Goose 1.60.1 reads the portable skill from the Git-backed plugin. The skill uses
+Goose's `AGENT_SESSION_ID`; the actual rename uses `goose session rename`.
 
 OpenCode or another shell-capable agent:
 
@@ -81,9 +82,22 @@ node /absolute/path/titlewave/bin/titlewave.mjs --help
 ```
 
 Ask the agent to read `skills/titlewave/SKILL.md` from the checkout. OpenCode can
-also discover it through a symlink at `.opencode/skills/titlewave`. Resolve the
-real skill directory before locating its `../../bin/titlewave.mjs` runtime.
-Copying only SKILL.md loses the runtime. No settings are overwritten.
+also discover it through a symlink at `.opencode/skills/titlewave`. Keep the whole
+checkout: the skill's `scripts/titlewave.mjs` launcher loads its shared runtime.
+Copying only SKILL.md loses the runtime.
+
+For OpenCode 1.x, add the context plugin to your existing `opencode.json`:
+
+```json
+{
+  "plugin": ["file:///absolute/path/titlewave/extensions/opencode.mjs"]
+}
+```
+
+It supplies the exact current session ID and owning server URL for NLP requests,
+and registers `/titlewave <name>` without replacing an existing user command.
+The hook was tested with OpenCode 1.17.11 and 1.19.6. Newer agents exposing a native
+`session_rename` tool should use that tool; this hook does not establish 2.x support.
 
 From an unpublished/local checkout, use `claude --plugin-dir /path/to/titlewave`,
 `gemini extensions link /path/to/titlewave`, or `pi install /path/to/titlewave`.
@@ -92,6 +106,22 @@ published. `install.sh` / `install.ps1` are optional legacy Claude skill links;
 the marketplace plugin also installs the session-context hook.
 
 ## Commands
+
+Plain-language requests distinguish the saved conversation from its terminal:
+
+- `Rename this session to Fix login` changes the saved conversation name.
+- `Rename this terminal window to Fix login` changes only its terminal label.
+- `Rename this session and its terminal to Fix login` changes both.
+
+Claude, Codex, and Goose discover the skill from their installed plugin. Pi exposes
+its native `titlewave` tool and the portable skill. OpenCode 1.x needs the context
+plugin above. The skill launcher requires explicit `--agent` and `--session`
+values, so a nested agent cannot silently rename its parent's conversation.
+
+If automatic selection fails, use Claude's `/titlewave:titlewave <name>`, Codex's
+`$titlewave`, or OpenCode's `/titlewave <name>`. These select a prompt and still
+need a model turn. Pi's `/titlewave <name>`, Claude's built-in `/rename <name>`,
+and the direct CLI below perform the rename without a model request.
 
 ```bash
 node bin/titlewave.mjs "Fix login" --agent codex --session <thread-id>
@@ -117,7 +147,7 @@ control characters or invisible formatting.
 ## Agent compatibility
 
 Tested 2026-11-19 with real release binaries in an isolated Linux Docker container.
-Fixtures contain a local user message; **no model turn or paid request** is made.
+CI fixtures contain a local user message; **no model turn or paid request** is made.
 The integration check writes evidence to `.evidence/agents.json`.
 Claude Code, Codex, and Pi were also exercised through their native Windows
 executables. OpenCode, Goose, and Gemini's saved-session checks ran on Linux.
@@ -136,6 +166,26 @@ an explicitly selected closed transcript; JSONL appends a `$set` record, legacy
 JSON uses an atomic replacement. Never pass `--offline` for a running process.
 Legacy JSON preservation is covered by a regression check; the real CLI check
 uses its current JSONL format.
+
+Separate real NLP checks passed on 2026-11-20. Each sent
+`Rename this session to <unique title>` and verified the persisted title, rather
+than trusting the model's reply:
+
+| Agent | NLP-tested version and platform | Model | Result |
+| --- | --- | --- | --- |
+| Claude Code | 2.1.328, Linux Docker | Claude Haiku 4.5 through OpenRouter | Skill selected; resumable transcript title confirmed |
+| Codex | 0.170.0, Linux Docker | Configured Codex model | Installed marketplace skill selected; app-server title confirmed |
+| OpenCode | 1.17.11, Windows | NVIDIA Nemotron 3 Ultra | Context plugin and skill selected; server title confirmed |
+| Pi | 0.80.2, Windows | NVIDIA Nemotron 3 Ultra | Native tool selected; session metadata confirmed |
+| Goose | 1.60.1, Linux Docker | OpenRouter free router | Installed skill selected; saved session name confirmed |
+| Gemini CLI | 0.69.0 | Not run: no configured authentication | NLP unverified; live saved-session rename unsupported |
+
+The Codex terminal-only NLP check also queried a real xterm window and confirmed
+the saved conversation name stayed unset. This does not establish terminal NLP
+behavior for every agent. Gemini can label its terminal while running; its saved
+summary remains an explicit offline operation. A slash command does not remove
+that restriction. NLP selection depends on the model and available tools.
+
 The Claude child disables hooks and excludes configured MCP servers so a rename
 does not replay SessionStart hooks or start unrelated tool servers.
 
@@ -167,30 +217,36 @@ or other keystrokes. An agent can overwrite an OSC title later.
 When multiple multiplexer contexts are inherited, titlewave refuses to guess
 which layer to label; clear the outer context or omit `--terminal`.
 
-| Terminal | Tested version | Check |
-| --- | --- | --- |
-| tmux | 3.3a | Real pane/window titles; split windows keep their window title |
-| GNU Screen | 4.09.00 | Real selected window title queried from the running server |
-| Zellij | 0.46.0 | Calling pane ID targeted and real pane title read back through `list-panes` |
-| kitty | 0.26.5 | Real X11 window title; requires `allow_remote_control yes` |
-| xterm | 379 | Real X11 title from OSC 2 sent to the controlling TTY |
-| rxvt-unicode | 9.30 | Real X11 title from OSC 2 |
-| Alacritty | 0.11.0 | Real X11 title from OSC 2 |
-| Ghostty | 1.4.0-arch1 | Linux X11 window title and native Wayland compositor title from OSC 2 |
-| foot | 1.28.0 | Native Wayland title read back through Sway IPC |
-| GNOME Terminal | 3.60.0 | Real X11 window title from OSC 2 |
-| Konsole | 26.08.3 | Real X11 title with the tab-title format set to `%w` |
-| Xfce Terminal | 1.2.0 | Real X11 window title from OSC 2 |
-| Terminator | 2.1.6 | Real X11 window title from OSC 2 |
-| Rio | 0.5.32 (Arch -1) | Linux X11 window title and native Wayland compositor title from OSC 2 |
-| Contour | 0.7.0.8982 (Arch -2) | Linux X11 window title and native Wayland compositor title from OSC 2 |
-| Herdr | 0.9.4-preview.2026-10-14-fbd2ae23927f | Native Windows pane label read back through `pane get` |
-| WezTerm | 20240203-110809-5046fc22 | Native Windows tab label read back through `cli list` |
-| Windows console | Windows 10.0.26300 | OSC 2 sent through `CONOUT$`, read back through the console title API |
+| Terminal | Tested version | Platform | Check |
+| --- | --- | --- | --- |
+| tmux | 3.3a | Linux | Real pane/window titles; split windows keep their window title |
+| GNU Screen | 4.09.00 | Linux | Real selected window title queried from the running server |
+| Zellij | 0.46.0 | Linux | Calling pane ID targeted and real pane title read back through `list-panes` |
+| kitty | 0.26.5 | Linux | Real X11 window title; requires `allow_remote_control yes` |
+| xterm | 379 | Linux | Real X11 title from OSC 2 sent to the controlling TTY |
+| rxvt-unicode | 9.30 | Linux | Real X11 title from OSC 2 |
+| Alacritty | 0.11.0 | Linux | Real X11 title from OSC 2 |
+| Ghostty | 1.4.0-arch1 | Linux | Linux X11 window title and native Wayland compositor title from OSC 2 |
+| foot | 1.28.0 | Linux | Native Wayland title read back through Sway IPC |
+| GNOME Terminal | 3.60.0 | Linux | Real X11 window title from OSC 2 |
+| Konsole | 26.08.3 | Linux | Real X11 title with the tab-title format set to `%w` |
+| Xfce Terminal | 1.2.0 | Linux | Real X11 window title from OSC 2 |
+| Terminator | 2.1.6 | Linux | Real X11 window title from OSC 2 |
+| Rio | 0.5.32 (Arch -1) | Linux | Linux X11 window title and native Wayland compositor title from OSC 2 |
+| Contour | 0.7.0.8982 (Arch -2) | Linux | Linux X11 window title and native Wayland compositor title from OSC 2 |
+| Herdr | 0.9.4-preview.2026-10-14-fbd2ae23927f | Windows | Native Windows pane label read back through `pane get` |
+| WezTerm | 20240203-110809-5046fc22 | Windows | Native Windows tab label read back through `cli list` |
+| Windows console | Windows 10.0.26300 | Windows | OSC 2 sent through `CONOUT$`, read back through the console title API |
+| Terminal.app | 2.12.7 | macOS 12.7.6, Intel | Real native window title, literal text, replacement, and invalid-input preservation |
 
 X11 checks run real emulators under Xvfb and query their window titles, rather
 than just comparing emitted bytes. `python3 test/terminals.py` reproduces them.
+The eight checks include a detached tool process with no controlling TTY.
 The test creates and closes only its own processes.
+For that detached case, titlewave finds the nearest ancestor TTY with `/bin/ps`.
+Normal terminal processes still write directly to `/dev/tty`. Run terminal-label
+tools without allocating an extra PTY, which can capture OSC output instead of
+forwarding it to the visible terminal.
 The eight newer Linux terminals are installed and tested entirely inside the
 separate `test/desktop.Dockerfile` image. Its 13 checks run as an unprivileged
 container user: X11 window queries, native Wayland titles through a headless
@@ -210,14 +266,24 @@ Ghostty on macOS has not been tested.
 The desktop suite also passed on an Intel Mac using Docker Desktop 4.40.0
 (Engine 28.0.4, Linux amd64). Terminal installation and execution stayed inside
 containers. This verifies Linux builds on a Mac-hosted engine; it does not verify
-native macOS builds, Terminal.app, or iTerm2.
+native macOS builds. Terminal.app was tested separately on the host; iTerm2 remains unverified.
+
+For the opt-in native Terminal.app check, run `open test/macos.command` on a Mac.
+It opens a fresh single-tab window, queries its actual title through AppleScript,
+and closes only that test window. Node 22+ must be on the GUI shell's PATH. For a
+custom Node path, open a fresh Terminal window and run
+`TITLEWAVE_NODE=/absolute/path/node test/macos.command` from the checkout.
+Allow the Terminal automation prompt if macOS asks. Evidence is written to
+`.evidence/macos-terminal-<pid>.json`; check both its results and cleanup status.
+The initial three native cases passed; a later four-case rerun, adding the
+detached-process case, was blocked by AppleEvent timeouts and remains unverified.
 
 `powershell -NoProfile -File test/windows.ps1` checks running Herdr and WezTerm
 servers using temporary panes. The Windows console check uses its own hidden
 PowerShell console; it does not establish Windows Terminal tab compatibility.
 
-Other OSC-capable terminals may work, but are not listed as verified. macOS
-terminals, Windows Terminal tabs, and Rex have not been exercised here. Unsupported or
+Other OSC-capable terminals may work, but are not listed as verified. Native macOS
+builds beyond Terminal.app, Windows Terminal tabs, and Rex have not been exercised here. Unsupported or
 unavailable terminal control reports an error; `--terminal` still preserves a
 successful saved-session rename. A standalone `terminal` failure exits nonzero.
 

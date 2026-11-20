@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.1.3 - 2026-11-20
+
+- Verify natural-language saved-session renaming with real Claude, Codex, OpenCode, Pi, and Goose model turns.
+- Give the skill a local launcher and require explicit agent/session targets to protect parent conversations.
+- Add OpenCode 1.x current-session context and a `/titlewave` fallback; include the portable skill in Pi packages.
+- Route terminal-only requests separately and recover the parent TTY when an agent's tool process has no controlling terminal.
+- Verify native Terminal.app 2.12.7 on macOS 12.7.6 and add an opt-in native window check.
+- Stop RPC children that ignore graceful termination, preventing a completed rename from hanging.
+- Allow 90 seconds for cold Claude CLI startup and stop the child if that deadline expires.
+- Expand unit checks to 31 and add real detached-process and subprocess-cleanup regressions.
+
 ## 0.1.2 - 2026-11-20
 
 - Verify Rio and Contour titles on Linux X11 and Wayland inside Docker on an Intel Mac.

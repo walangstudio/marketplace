@@ -52,7 +52,13 @@ export async function withRpc(command, args, action, dialect = 'codex') {
   } finally {
     lines.close();
     child.stdin.destroy();
+    const stopped = new Promise(resolve => {
+      if (!child.pid || child.exitCode !== null || child.signalCode !== null) resolve();
+      else { child.once('exit', resolve); child.once('error', resolve); }
+    });
     child.kill();
+    const timer = setTimeout(() => child.kill('SIGKILL'), 1000);
     fail(new Error('RPC connection closed'));
+    try { await stopped; } finally { clearTimeout(timer); }
   }
 }
