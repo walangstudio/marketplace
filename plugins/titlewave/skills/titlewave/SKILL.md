@@ -13,8 +13,13 @@ interpolate a name into a shell expression; use the host shell's literal quoting
 
 For a window, tab, pane, or terminal-only request, run
 `node <absolute-script-path> terminal <name>`. Leave the saved conversation name
-unchanged. A session, chat, or conversation request changes only the saved name.
-For an explicit request to rename both, add `--terminal` to the saved rename.
+unchanged. An explicit saved-session-only request changes only the saved name.
+For the current session, also keep its terminal label aligned with the requested
+name unless the user explicitly asks for a saved-session-only rename. When the
+terminal label differs, add `--terminal` to the saved rename. If the label cannot
+be read but the target terminal is verified, attempt `--terminal` and report its
+actual result. When a native rename tool changes only the saved name, follow it
+with `terminal <name>` if the terminal label still needs updating.
 Run terminal-label commands without allocating another PTY. An extra tool PTY
 can capture title escapes instead of forwarding them to the visible window.
 
@@ -28,6 +33,16 @@ session ID and the owning server's loopback URL (`--url`); ask if unavailable.
 Never guess the newest session or read unrelated conversation contents.
 Prefer a native current-session rename tool when the host exposes one, such as
 Codex's task-title tool, OpenCode's `session_rename`, or Pi's `titlewave` tool.
+
+Codex's shared daemon inherits its first terminal's environment. When
+`CODEX_DAEMON_SHUTDOWN_SOCKET` is present, inherited terminal IDs and Herdr agent
+session metadata do not prove which pane owns this conversation. For Herdr,
+get the user's confirmed fully qualified pane ID and add `--herdr-pane <id>`
+to the terminal command or saved rename with `--terminal`. Never choose by focus,
+working directory, or the first matching agent. If no verified target is
+available, leave terminal labels unchanged and ask for the pane ID. Starting a
+new Codex client with `--no-daemon` avoids the shared environment; do not stop
+or restart the user's shared server.
 
 Pi: use the extension's `titlewave` tool, or `/titlewave <name>`. Its standalone
 CLI requires `--offline --session <session.jsonl>` and a closed session.

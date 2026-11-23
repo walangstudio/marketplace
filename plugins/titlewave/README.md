@@ -1,13 +1,15 @@
 # titlewave
 
-![tests](https://img.shields.io/badge/unit_tests-33%20passing-brightgreen) ![version](https://img.shields.io/badge/version-0.1.6-blue)
+![unit tests](https://img.shields.io/badge/unit_tests-34%20passing-brightgreen) ![version](https://img.shields.io/badge/version-0.1.7-blue)
 
 titlewave makes waves with better coding-agent session titles.
 
 Ask your agent to "rename this session to Fix login", or run the CLI yourself.
 The rename operation itself needs no model call. A natural-language request uses
-the agent's normal model turn to select the skill or tool. Add `--terminal` to label the pane
-or tab too. Names stay literal, including spaces, quotes, and Unicode.
+the agent's normal model turn to select the skill or tool. For the current session,
+the skill also aligns its verified terminal label when it differs. The CLI keeps
+terminal labeling opt-in with `--terminal`. Names stay literal, including spaces,
+quotes, and Unicode.
 
 Formerly session-rename. The old `lm-rename.sh` and `lm-rename.ps1` entry points
 remain as Claude wrappers. The shared Node implementation replaces their
@@ -34,7 +36,7 @@ Claude Code:
 /plugin install titlewave@walangstudio
 ```
 
-Restart Claude Code, then `/titlewave:titlewave Fix login`, or ask in plain words.
+Restart Claude Code, then `/titlewave Fix login`, or ask in plain words.
 The plugin supplies the current session ID through its SessionStart hook.
 
 Codex:
@@ -109,7 +111,8 @@ the marketplace plugin also installs the session-context hook.
 
 Plain-language requests distinguish the saved conversation from its terminal:
 
-- `Rename this session to Fix login` changes the saved conversation name.
+- `Rename this session to Fix login` changes the saved name and aligns the verified current terminal when needed.
+- `Rename only the saved conversation to Fix login` leaves the terminal unchanged.
 - `Rename this terminal window to Fix login` changes only its terminal label.
 - `Rename this session and its terminal to Fix login` changes both.
 
@@ -118,10 +121,13 @@ its native `titlewave` tool and the portable skill. OpenCode 1.x needs the conte
 plugin above. The skill launcher requires explicit `--agent` and `--session`
 values, so a nested agent cannot silently rename its parent's conversation.
 
-If automatic selection fails, use Claude's `/titlewave:titlewave <name>`, Codex's
+If automatic selection fails, use Claude's `/titlewave <name>`, Codex's
 `$titlewave`, or OpenCode's `/titlewave <name>`. These select a prompt and still
 need a model turn. Pi's `/titlewave <name>`, Claude's built-in `/rename <name>`,
 and the direct CLI below perform the rename without a model request.
+Claude's fully qualified `/titlewave:titlewave <name>` remains available when
+another command claims the short alias. Pi's direct slash command changes only
+the saved name; its natural-language skill handles terminal alignment too.
 
 ```bash
 node bin/titlewave.mjs "Fix login" --agent codex --session <thread-id>
@@ -143,6 +149,23 @@ explicit different session never implies relabeling its terminal. `--dry-run`
 prints the request without running an agent, writing a file, or emitting escapes.
 Names must contain 1-200 characters and cannot start with a dash or contain
 control characters or invisible formatting.
+
+Codex's shared daemon can reuse a different terminal's environment
+([upstream behavior](https://github.com/openai/codex/blob/main/codex-rs/app-server-daemon/README.md)).
+Titlewave refuses inherited terminal targets when the daemon marker is present.
+For Herdr, supply the user's verified fully qualified pane ID explicitly:
+
+```bash
+node bin/titlewave.mjs terminal "Fix login" --herdr-pane <verified-pane-id>
+node bin/titlewave.mjs "Fix login" --agent codex --session <thread-id> --terminal --herdr-pane <verified-pane-id>
+```
+
+Use the ID from the intended pane, not from the shared server's shell environment,
+focus, working directory, or its agent-session metadata. Without a verified ID,
+leave terminal labels unchanged and ask for the target. Starting a new Codex client
+with `codex --no-daemon` gives it its own environment; do not restart a shared
+server to rename a title. Other terminal backends require a trustworthy caller
+environment and cannot use `--herdr-pane` as a generic pane override.
 
 ## Agent compatibility
 
@@ -288,8 +311,8 @@ Allow the Terminal automation prompt if macOS asks. Evidence is written to
 The initial three native cases passed; a later four-case rerun, adding the
 detached-process case, was blocked by AppleEvent timeouts and remains unverified.
 
-`powershell -NoProfile -File test/windows.ps1` checks a temporary Herdr tab with
-single and split panes, plus a temporary WezTerm window. The Windows console check uses its own hidden
+`powershell -NoProfile -File test/windows.ps1` checks temporary Herdr tabs with
+stale daemon context, explicit targets and split panes, plus a temporary WezTerm window. The Windows console check uses its own hidden
 PowerShell console; it does not establish Windows Terminal tab compatibility.
 
 Other OSC-capable terminals may work, but are not listed as verified. Native macOS

@@ -3,7 +3,13 @@ import { openSync, writeSync, closeSync } from 'node:fs';
 import { validateName } from './agents.mjs';
 import { nativeCommand } from './rpc.mjs';
 
-export function terminalHost(env = process.env) {
+export function terminalHost(env = process.env, herdrPane) {
+  if (herdrPane !== undefined) {
+    try { validateName(herdrPane); }
+    catch { throw new Error('Use a nonempty, fully qualified --herdr-pane ID without control characters.'); }
+    return 'herdr';
+  }
+  if (env.CODEX_DAEMON_SHUTDOWN_SOCKET) throw new Error('Codex shared-daemon terminal context may belong to another pane. Start Codex with --no-daemon; Herdr callers can instead supply a verified --herdr-pane ID.');
   if ([env.TMUX && env.TMUX_PANE, env.STY && env.WINDOW !== undefined, env.ZELLIJ].filter(Boolean).length > 1) {
     throw new Error('Multiple multiplexers detected; omit --terminal or clear the inherited outer context.');
   }
@@ -29,10 +35,10 @@ function ancestorTty() {
   } catch {}
 }
 
-export function setTerminalTitle(name, env = process.env) {
+export function setTerminalTitle(name, env = process.env, herdrPane) {
   validateName(name);
   const run = (exe, args) => execFileSync(nativeCommand(exe), args, { encoding: 'utf8', timeout: 5000, windowsHide: true });
-  const host = terminalHost(env);
+  const host = terminalHost(env, herdrPane);
   switch (host) {
     case 'tmux':
       run('tmux', ['select-pane', '-t', env.TMUX_PANE, '-T', name]);
@@ -45,8 +51,10 @@ export function setTerminalTitle(name, env = process.env) {
       const herdr = args => execFileSync(command, args, { encoding: 'utf8', timeout: 5000, windowsHide: true });
       let paneSaved = false;
       try {
-        const pane = JSON.parse(herdr(['pane', 'get', env.HERDR_PANE_ID]))?.result?.pane;
+        const target = herdrPane || env.HERDR_PANE_ID;
+        const pane = JSON.parse(herdr(['pane', 'get', target]))?.result?.pane;
         if (typeof pane?.pane_id !== 'string' || !pane.pane_id) throw new Error('Herdr pane was not found.');
+        if (herdrPane && pane.pane_id !== herdrPane) throw new Error('Herdr requires the exact fully qualified --herdr-pane ID.');
         herdr(['pane', 'rename', pane.pane_id, name]);
         const savedPane = JSON.parse(herdr(['pane', 'get', pane.pane_id]))?.result?.pane;
         if (savedPane?.pane_id !== pane.pane_id || savedPane.label !== name) throw new Error('Herdr did not save the pane label.');
