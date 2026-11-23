@@ -1,6 +1,6 @@
 # titlewave
 
-![tests](https://img.shields.io/badge/tests-32%20passing-brightgreen) ![version](https://img.shields.io/badge/version-0.1.4-blue)
+![tests](https://img.shields.io/badge/tests-32%20passing-brightgreen) ![version](https://img.shields.io/badge/version-0.1.5-blue)
 
 titlewave makes waves with better coding-agent session titles.
 
@@ -240,10 +240,14 @@ which layer to label; clear the outer context or omit `--terminal`.
 | Terminator | 2.1.6 | Linux | Real X11 window title from OSC 2 |
 | Rio | 0.5.32 (Arch -1) | Linux | Linux X11 window title and native Wayland compositor title from OSC 2 |
 | Contour | 0.7.0.8982 (Arch -2) | Linux | Linux X11 window title and native Wayland compositor title from OSC 2 |
-| Herdr | 0.9.4-preview.2026-10-14-fbd2ae23927f | Windows | Native Windows pane label read back through `pane get` |
+| Herdr | 0.9.4-preview.2026-10-14-fbd2ae23927f | Windows | Single-pane tab and pane labels read back; split tabs preserve the tab and neighboring pane labels |
 | WezTerm | 20240203-110809-5046fc22 | Windows | Native Windows tab label read back through `cli list` |
 | Windows console | Windows 10.0.26300 | Windows | OSC 2 sent through `CONOUT$`, read back through the console title API |
 | Terminal.app | 2.12.7 | macOS 12.7.6, Intel | Real native window title, literal text, replacement, and invalid-input preservation |
+
+Herdr requires the `pane get`, `pane rename`, `tab get` (including `pane_count`),
+and `tab rename` APIs available in the 0.9.4 preview listed above. A failed tab
+operation reports whether the pane label was already saved.
 
 X11 checks run real emulators under Xvfb and query their window titles, rather
 than just comparing emitted bytes. `python3 test/terminals.py` reproduces them.
@@ -284,8 +288,8 @@ Allow the Terminal automation prompt if macOS asks. Evidence is written to
 The initial three native cases passed; a later four-case rerun, adding the
 detached-process case, was blocked by AppleEvent timeouts and remains unverified.
 
-`powershell -NoProfile -File test/windows.ps1` checks running Herdr and WezTerm
-servers using temporary panes. The Windows console check uses its own hidden
+`powershell -NoProfile -File test/windows.ps1` checks a temporary Herdr tab with
+single and split panes, plus a temporary WezTerm window. The Windows console check uses its own hidden
 PowerShell console; it does not establish Windows Terminal tab compatibility.
 
 Other OSC-capable terminals may work, but are not listed as verified. Native macOS

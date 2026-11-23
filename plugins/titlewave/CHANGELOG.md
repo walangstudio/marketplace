@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.1.5 - 2026-11-23
+
+- Rename Herdr's visible tab along with its pane when the tab contains one pane.
+- Keep shared tab and neighboring pane labels unchanged in split Herdr layouts.
+- Resolve the tab from the live pane and verify saved labels before reporting success.
+- Reproduce the Windows tab-label failure and cover single-pane and split-tab behavior in the native regression checks.
+- Allow cold desktop-terminal startup before checking visible labels.
+
 ## 0.1.4 - 2026-11-20
 
 - Verify authenticated Gemini NLP for a visible terminal title and a separate closed session's saved summary in Mac-hosted Docker.
