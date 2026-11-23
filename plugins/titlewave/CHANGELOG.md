@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.1.6 - 2026-11-23
+
+- Report partial terminal-label failures without claiming that all labels stayed unchanged.
+- Include Herdr context when its first pane lookup fails.
+- Document the required Herdr pane/tab lookup and rename APIs, verified on 0.9.4-preview.2026-10-14-fbd2ae23927f.
+- Reject surrounding whitespace before Herdr can silently trim a label; cover this with the 33rd unit check.
+- Try snapshot package downloads up to three times with backoff, preserving cached packages and native timeouts.
+
 ## 0.1.5 - 2026-11-23
 
 - Rename Herdr's visible tab along with its pane when the tab contains one pane.

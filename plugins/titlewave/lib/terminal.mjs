@@ -40,12 +40,13 @@ export function setTerminalTitle(name, env = process.env) {
       break;
     case 'screen': run('screen', ['-S', env.STY, '-p', env.WINDOW, '-X', 'title', name]); break;
     case 'herdr': {
+      if (name !== name.trim()) throw new Error('Herdr trims surrounding whitespace; use a title without it.');
       const command = nativeCommand('herdr');
       const herdr = args => execFileSync(command, args, { encoding: 'utf8', timeout: 5000, windowsHide: true });
-      const pane = JSON.parse(herdr(['pane', 'get', env.HERDR_PANE_ID]))?.result?.pane;
-      if (typeof pane?.pane_id !== 'string' || !pane.pane_id) throw new Error('Herdr pane was not found.');
       let paneSaved = false;
       try {
+        const pane = JSON.parse(herdr(['pane', 'get', env.HERDR_PANE_ID]))?.result?.pane;
+        if (typeof pane?.pane_id !== 'string' || !pane.pane_id) throw new Error('Herdr pane was not found.');
         herdr(['pane', 'rename', pane.pane_id, name]);
         const savedPane = JSON.parse(herdr(['pane', 'get', pane.pane_id]))?.result?.pane;
         if (savedPane?.pane_id !== pane.pane_id || savedPane.label !== name) throw new Error('Herdr did not save the pane label.');

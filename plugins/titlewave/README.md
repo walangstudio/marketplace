@@ -1,6 +1,6 @@
 # titlewave
 
-![tests](https://img.shields.io/badge/tests-32%20passing-brightgreen) ![version](https://img.shields.io/badge/version-0.1.5-blue)
+![tests](https://img.shields.io/badge/unit_tests-33%20passing-brightgreen) ![version](https://img.shields.io/badge/version-0.1.6-blue)
 
 titlewave makes waves with better coding-agent session titles.
 
@@ -296,6 +296,8 @@ Other OSC-capable terminals may work, but are not listed as verified. Native mac
 builds beyond Terminal.app, Windows Terminal tabs, and Rex have not been exercised here. Unsupported or
 unavailable terminal control reports an error; `--terminal` still preserves a
 successful saved-session rename. A standalone `terminal` failure exits nonzero.
+Herdr trims surrounding whitespace, so those titles are rejected before changing labels.
+Its pane-count lookup and tab rename are separate operations; avoid splitting the tab during a rename.
 
 ## Develop
 
