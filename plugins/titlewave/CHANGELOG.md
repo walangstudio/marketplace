@@ -7,6 +7,7 @@
 - Check the exact fully qualified Herdr pane ID before mutation, rejecting context-dependent aliases.
 - Cover stale daemon targets with a two-tab native regression and 34 unit checks.
 - Document Claude's verified short `/titlewave` alias and the shared-server limitation.
+- Disable the desktop downloader's ten-second stall timeout inside a five-minute deadline per attempt; retain interrupted download progress and keep installation outside that deadline.
 
 ## 0.1.6 - 2026-11-23
 
