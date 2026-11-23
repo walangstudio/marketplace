@@ -31,7 +31,7 @@ try {
       console.log(`Session renamed to: ${name} (${agent})`);
       if (values.terminal) {
         try { console.log(labelTerminal(name)); }
-        catch (error) { console.error(`Session saved; terminal unchanged: ${error.message}`); }
+        catch (error) { console.error(`Session saved; terminal labeling failed: ${error.message}`); }
       }
     }
   }

@@ -1,5 +1,22 @@
 # Changelog
 
+## 0.1.6 - 2026-11-23
+
+- Report partial terminal-label failures without claiming that all labels stayed unchanged.
+- Include Herdr context when its first pane lookup fails.
+- Document the required Herdr pane/tab lookup and rename APIs, verified on 0.9.4-preview.2026-10-14-fbd2ae23927f.
+- Reject surrounding whitespace before Herdr can silently trim a label; cover this with the 33rd unit check.
+- Try snapshot package downloads up to three times with backoff, preserving cached packages and native timeouts.
+- Remove the desktop test image's package cache directly, including pacman's temporary download directories.
+
+## 0.1.5 - 2026-11-23
+
+- Rename Herdr's visible tab along with its pane when the tab contains one pane.
+- Keep shared tab and neighboring pane labels unchanged in split Herdr layouts.
+- Resolve the tab from the live pane and verify saved labels before reporting success.
+- Reproduce the Windows tab-label failure and cover single-pane and split-tab behavior in the native regression checks.
+- Allow cold desktop-terminal startup before checking visible labels.
+
 ## 0.1.4 - 2026-11-20
 
 - Verify authenticated Gemini NLP for a visible terminal title and a separate closed session's saved summary in Mac-hosted Docker.

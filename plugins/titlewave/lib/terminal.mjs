@@ -39,7 +39,31 @@ export function setTerminalTitle(name, env = process.env) {
       if (run('tmux', ['display-message', '-p', '-t', env.TMUX_PANE, '#{window_panes}']).trim() === '1') run('tmux', ['rename-window', '-t', env.TMUX_PANE, name]);
       break;
     case 'screen': run('screen', ['-S', env.STY, '-p', env.WINDOW, '-X', 'title', name]); break;
-    case 'herdr': run('herdr', ['pane', 'rename', env.HERDR_PANE_ID, name]); break;
+    case 'herdr': {
+      if (name !== name.trim()) throw new Error('Herdr trims surrounding whitespace; use a title without it.');
+      const command = nativeCommand('herdr');
+      const herdr = args => execFileSync(command, args, { encoding: 'utf8', timeout: 5000, windowsHide: true });
+      let paneSaved = false;
+      try {
+        const pane = JSON.parse(herdr(['pane', 'get', env.HERDR_PANE_ID]))?.result?.pane;
+        if (typeof pane?.pane_id !== 'string' || !pane.pane_id) throw new Error('Herdr pane was not found.');
+        herdr(['pane', 'rename', pane.pane_id, name]);
+        const savedPane = JSON.parse(herdr(['pane', 'get', pane.pane_id]))?.result?.pane;
+        if (savedPane?.pane_id !== pane.pane_id || savedPane.label !== name) throw new Error('Herdr did not save the pane label.');
+        paneSaved = true;
+        if (typeof savedPane.tab_id !== 'string' || !savedPane.tab_id) throw new Error('Herdr pane has no tab ID.');
+        const tab = JSON.parse(herdr(['tab', 'get', savedPane.tab_id]))?.result?.tab;
+        if (tab?.tab_id !== savedPane.tab_id || !Number.isSafeInteger(tab.pane_count) || tab.pane_count < 1) throw new Error('Herdr tab was not found.');
+        if (tab.pane_count === 1) {
+          herdr(['tab', 'rename', tab.tab_id, name]);
+          const savedTab = JSON.parse(herdr(['tab', 'get', tab.tab_id]))?.result?.tab;
+          if (savedTab?.tab_id !== tab.tab_id || savedTab.label !== name) throw new Error('Herdr did not save the tab label.');
+        }
+      } catch (error) {
+        throw new Error(`${paneSaved ? 'Herdr pane label saved; tab label unverified' : 'Herdr pane label unverified'}: ${error.message}`);
+      }
+      break;
+    }
     case 'wezterm': {
       const panes = JSON.parse(run('wezterm', ['cli', 'list', '--format', 'json']));
       const pane = panes.find(p => String(p.pane_id) === env.WEZTERM_PANE);
