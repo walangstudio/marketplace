@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.1.7 - 2026-11-23
+
+- Align the current session's terminal label through the skill when its title differs, while preserving explicit saved-only requests and the CLI's opt-in flag.
+- Refuse inherited terminal targets in Codex shared-daemon contexts; accept a verified `--herdr-pane` instead.
+- Check the exact fully qualified Herdr pane ID before mutation, rejecting context-dependent aliases.
+- Cover stale daemon targets with a two-tab native regression and 34 unit checks.
+- Document Claude's verified short `/titlewave` alias and the shared-server limitation.
+
 ## 0.1.6 - 2026-11-23
 
 - Report partial terminal-label failures without claiming that all labels stayed unchanged.

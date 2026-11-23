@@ -4,6 +4,7 @@ try {
   const { values, positionals } = parseArgs({ allowPositionals: true, strict: false, options: {
     agent: { type: 'string' }, session: { type: 'string' }, url: { type: 'string' },
     transcript: { type: 'string' }, help: { type: 'boolean', short: 'h' },
+    'herdr-pane': { type: 'string' },
   } });
   const terminalOnly = positionals.length === 2 && positionals[0] === 'terminal';
   if (!values.help && !terminalOnly && (!values.agent || !values.session)) {
