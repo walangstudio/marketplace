@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.2.0 - 2026-11-25
+
+- Restore saved session titles on resume through Claude, Codex, Gemini, Pi, and Goose lifecycle integrations, including Claude forked resumes.
+- Add an immediate Codex resume launcher; native Codex queues its lifecycle hook until the first message.
+- Add an OpenCode client-side TUI plugin that follows the selected session without trusting shared server events.
+- Reuse terminal targeting and split-pane protections; refuse stale Codex daemon environments without blocking resume.
+- Read native saved titles without model calls, transcript edits, or a pane cache.
+- Exercise restoration through the Linux terminal suites and native Windows Herdr, WezTerm, and console checks.
+
 ## 0.1.7 - 2026-11-23
 
 - Align the current session's terminal label through the skill when its title differs, while preserving explicit saved-only requests and the CLI's opt-in flag.

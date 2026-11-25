@@ -8,11 +8,14 @@ const { version } = JSON.parse(readFileSync(new URL('../package.json', import.me
 export function nativeCommand(command) {
   if (process.platform !== 'win32') return command;
   if (!process.env.SystemRoot) throw new Error('Windows SystemRoot is missing from the environment.');
-  try { return execFileSync(join(process.env.SystemRoot, 'System32', 'where.exe'), [`$PATH:${command}.exe`], { encoding: 'utf8', windowsHide: true }).trim().split(/\r?\n/)[0]; }
-  catch { throw new Error(`Windows requires a native ${command}.exe on PATH; npm .cmd shims cannot be launched safely.`); }
+  try { return execFileSync(join(process.env.SystemRoot, 'System32', 'where.exe'), [`$PATH:${command}.exe`], { encoding: 'utf8', timeout: 5000, windowsHide: true }).trim().split(/\r?\n/)[0]; }
+  catch (error) {
+    if (error.code === 'ETIMEDOUT') throw new Error(`Windows ${command}.exe lookup timed out.`);
+    throw new Error(`Windows requires a native ${command}.exe on PATH; npm .cmd shims cannot be launched safely.`);
+  }
 }
 
-export async function withRpc(command, args, action, dialect = 'codex') {
+export async function withRpc(command, args, action, dialect = 'codex', timeout = 60000) {
   const child = spawn(nativeCommand(command), args, { stdio: ['pipe', 'pipe', 'pipe'], windowsHide: true });
   const pending = new Map();
   let sequence = 0;
@@ -39,7 +42,7 @@ export async function withRpc(command, args, action, dialect = 'codex') {
   const notify = (method, params) => child.stdin.write(`${JSON.stringify({ method, ...(params && { params }) })}\n`);
   const request = (method, params = {}) => new Promise((resolve, reject) => {
     const id = String(++sequence);
-    const timer = setTimeout(() => { pending.delete(id); reject(new Error(`${method} timed out`)); }, sequence === 1 ? 60000 : 15000);
+    const timer = setTimeout(() => { pending.delete(id); reject(new Error(`${method} timed out`)); }, sequence === 1 ? timeout : Math.min(timeout, 15000));
     pending.set(id, { resolve, reject, timer });
     child.stdin.write(`${JSON.stringify(dialect === 'pi' ? { id, type: method, ...params } : { id, method, params })}\n`);
   });

@@ -4,10 +4,10 @@ try {
   const { values, positionals } = parseArgs({ allowPositionals: true, strict: false, options: {
     agent: { type: 'string' }, session: { type: 'string' }, url: { type: 'string' },
     transcript: { type: 'string' }, help: { type: 'boolean', short: 'h' },
-    'herdr-pane': { type: 'string' },
+    'herdr-pane': { type: 'string' }, resume: { type: 'string' },
   } });
   const terminalOnly = positionals.length === 2 && positionals[0] === 'terminal';
-  if (!values.help && !terminalOnly && (!values.agent || !values.session)) {
+  if (!values.help && values.resume === undefined && !terminalOnly && (!values.agent || !values.session)) {
     throw new Error('Saved renames require explicit --agent and --session; inherited agent identities are not safe targets.');
   }
   await import('../../../bin/titlewave.mjs');
