@@ -16,7 +16,8 @@ def main():
     source = args.source.resolve()
     files = [
         ".codex-plugin/plugin.json", "package.json", "bin/titlewave.mjs",
-        "lib/agents.mjs", "lib/rpc.mjs", "lib/terminal.mjs",
+        "lib/agents.mjs", "lib/rpc.mjs", "lib/terminal.mjs", "lib/resume.mjs", "lib/client.mjs",
+        "hooks/start.mjs", "hooks/codex.json",
         "skills/titlewave/SKILL.md", "skills/titlewave/scripts/titlewave.mjs",
         "README.md", "LICENSE", "CHANGELOG.md",
     ]

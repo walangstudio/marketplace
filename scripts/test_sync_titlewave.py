@@ -24,6 +24,9 @@ with tempfile.TemporaryDirectory(prefix="titlewave-sync-") as temporary:
     assert run(source, "--check").returncode == 0
     assert run(destination).returncode != 0
     assert (destination / "bin" / "titlewave.mjs").is_file()
+    assert (destination / "hooks" / "start.mjs").is_file()
+    assert (destination / "hooks" / "codex.json").is_file()
+    assert (destination / "lib" / "resume.mjs").is_file()
     (destination / "obsolete.txt").write_text("stale")
     assert run(source, "--check").returncode != 0
     assert run(source).returncode == 0

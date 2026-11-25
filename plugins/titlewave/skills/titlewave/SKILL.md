@@ -44,6 +44,12 @@ available, leave terminal labels unchanged and ask for the pane ID. Starting a
 new Codex client with `--no-daemon` avoids the shared environment; do not stop
 or restart the user's shared server.
 
+Resuming a named session normally restores its terminal title through the agent's
+hook or UI extension. Codex delays its native hook until the first message. For
+an immediate update, give the user `node <script> --resume <exact Codex session ID>`
+to run in their own terminal. Do not launch it through a captured tool session or
+allocate an extra PTY to make it pass the interactive check.
+
 Pi: use the extension's `titlewave` tool, or `/titlewave <name>`. Its standalone
 CLI requires `--offline --session <session.jsonl>` and a closed session.
 

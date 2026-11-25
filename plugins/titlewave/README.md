@@ -1,6 +1,6 @@
 # titlewave
 
-![unit tests](https://img.shields.io/badge/unit_tests-34%20passing-brightgreen) ![version](https://img.shields.io/badge/version-0.1.7-blue)
+![unit tests](https://img.shields.io/badge/unit_tests-50%20passing-brightgreen) ![version](https://img.shields.io/badge/version-0.2.0-blue)
 
 titlewave makes waves with better coding-agent session titles.
 
@@ -106,6 +106,77 @@ From an unpublished/local checkout, use `claude --plugin-dir /path/to/titlewave`
 The marketplace entries and Git install commands require the release to be
 published. `install.sh` / `install.ps1` are optional legacy Claude skill links;
 the marketplace plugin also installs the session-context hook.
+
+## Resume restores the terminal title
+
+In titlewave 0.2.0+, resume a named session and titlewave restores its saved title in the current
+terminal. No rename prompt, `--terminal`, model turn, or saved-title cache is
+needed. The session itself is read only during restoration.
+
+| Agent | Resume integration |
+| --- | --- |
+| Claude Code | The installed plugin's `SessionStart` hook, for `--resume`, `/resume`, and forked resumes |
+| Codex | Use `titlewave --resume <session-id>` for an immediate update. Native Codex resume queues its `SessionStart` hook until the first message; review that hook with `/hooks` |
+| Gemini CLI | The installed extension's `SessionStart` hook reads the resumed transcript's summary |
+| Pi | The installed extension restores named interactive sessions on startup and session switches; headless RPC leaves the terminal alone |
+| Goose | The installed plugin's `SessionStart` hook selects the exact session ID from native session metadata; Goose does not distinguish startup from resume in its hook payload |
+| OpenCode 1.19.6 | Install the separate client-side TUI plugin below; the server context plugin alone cannot identify a terminal's selected session |
+
+For OpenCode, keep the existing server context plugin and add this to your
+`tui.json` (project or global):
+
+```json
+{
+  "plugin": ["file:///absolute/path/titlewave/extensions/opencode-tui.mjs"]
+}
+```
+
+The TUI plugin observes its local route every 250 ms and reads a title only when
+the selected session changes. It discards responses for a session you already
+left and stops observing when unloaded. It does not act on another client's
+server events. Earlier OpenCode versions without this TUI API need the existing
+manual terminal command.
+Pi and OpenCode perform native terminal commands in a serialized background
+worker, so a slow terminal command does not freeze the agent UI.
+OpenCode's standalone runtime needs `node` on PATH for multiplexer and native
+terminal commands. Pi reuses its running Node executable. Shutdown waits for an
+active title command to finish and discards queued labels.
+
+Pi and OpenCode can add their normal agent or directory decorations to a pane's
+OSC title after restoration. The saved name and targeted tmux window name stay
+intact. For OpenCode's exact undecorated pane title, set
+`OPENCODE_DISABLE_TERMINAL_TITLE=true` before launch.
+
+Codex's immediate launcher reads the saved name, labels the calling terminal,
+then starts `codex --no-daemon resume <session-id>` with the same interactive
+input and output. From a checkout or an installed marketplace package:
+
+```bash
+node /absolute/path/titlewave/bin/titlewave.mjs --resume <codex-session-id>
+```
+
+Run it in your terminal, rather than through an agent's captured tool output.
+It starts no model turn. A title failure warns and still resumes Codex.
+Codex also runs its queued resume hook on the first message, refreshing the saved
+name even after the launcher. A terminal-only override made before that message
+is replaced by the saved name then.
+
+Restoration uses the same terminal backends and split-pane protections listed
+below: iTerm-compatible OSC terminals, PowerShell consoles, Herdr, tmux, Screen,
+Zellij, WezTerm, and kitty. Fixed terminal titles and shell or agent title
+overrides still take precedence. Titlewave skips unnamed sessions.
+Switching to an unnamed session leaves the existing terminal label in place.
+Failures warn without blocking resume or modifying the saved session. A native
+headless resume launched in a terminal also relabels that terminal. Goose's
+hook requires a local `goose session` or `goose run` owner; remote server clients
+must label their own terminal. Pi's RPC extension leaves terminal labels alone.
+Restoration uses the same 1-200-character title validation as manual renames.
+
+Codex's shared daemon can inherit another window's terminal environment. Its
+resume hook refuses that context. Start the resuming client with `--no-daemon`;
+do not reuse a pane saved from an earlier run. Explicit manual Herdr renames
+still accept a verified `--herdr-pane`. Codex also requires review of new or
+changed hooks before they run; updating the plugin alone does not grant trust.
 
 ## Commands
 
@@ -266,7 +337,7 @@ which layer to label; clear the outer context or omit `--terminal`.
 | Herdr | 0.9.4-preview.2026-10-14-fbd2ae23927f | Windows | Single-pane tab and pane labels read back; split tabs preserve the tab and neighboring pane labels |
 | WezTerm | 20240203-110809-5046fc22 | Windows | Native Windows tab label read back through `cli list` |
 | Windows console | Windows 10.0.26300 | Windows | OSC 2 sent through `CONOUT$`, read back through the console title API |
-| Terminal.app | 2.12.7 | macOS 12.7.6, Intel | Real native window title, literal text, replacement, and invalid-input preservation |
+| Terminal.app | 2.12.7 | macOS 12.7.6, Intel | Real native window title, literal text, replacement, invalid-input preservation, detached processes, and resume restoration |
 
 Herdr requires the `pane get`, `pane rename`, `tab get` (including `pane_count`),
 and `tab rename` APIs available in the 0.9.4 preview listed above. A failed tab
@@ -274,14 +345,14 @@ operation reports whether the pane label was already saved.
 
 X11 checks run real emulators under Xvfb and query their window titles, rather
 than just comparing emitted bytes. `python3 test/terminals.py` reproduces them.
-The eight checks include a detached tool process with no controlling TTY.
+The eight cases run in both manual and resume modes, including a detached tool process with no controlling TTY.
 The test creates and closes only its own processes.
 For that detached case, titlewave finds the nearest ancestor TTY with `/bin/ps`.
 Normal terminal processes still write directly to `/dev/tty`. Run terminal-label
 tools without allocating an extra PTY, which can capture OSC output instead of
 forwarding it to the visible terminal.
 The eight newer Linux terminals are installed and tested entirely inside the
-separate `test/desktop.Dockerfile` image. Its 13 checks run as an unprivileged
+separate `test/desktop.Dockerfile` image. Its 13 cases run in both manual and resume modes as an unprivileged
 container user: X11 window queries, native Wayland titles through a headless
 Sway compositor, and negative checks for Ghostty and Rio's fixed-title settings. No host
 terminal applications, display sockets, GPU devices, or privileged container
@@ -308,8 +379,9 @@ custom Node path, open a fresh Terminal window and run
 `TITLEWAVE_NODE=/absolute/path/node test/macos.command` from the checkout.
 Allow the Terminal automation prompt if macOS asks. Evidence is written to
 `.evidence/macos-terminal-<pid>.json`; check both its results and cleanup status.
-The initial three native cases passed; a later four-case rerun, adding the
-detached-process case, was blocked by AppleEvent timeouts and remains unverified.
+All five native cases passed on macOS 12.7.6, Intel, with Terminal.app 2.12.7
+and Node 22.23.1, including detached processes and resume restoration. The test
+window closed successfully. The same Mac passed the build and all 50 unit tests.
 
 `powershell -NoProfile -File test/windows.ps1` checks temporary Herdr tabs with
 stale daemon context, explicit targets and split panes, plus a temporary WezTerm window. The Windows console check uses its own hidden
@@ -357,12 +429,12 @@ the earlier native-host verification and are not needed for the Docker suites.
 
 Layout: `bin/` is the CLI, `lib/` contains agent and terminal adapters, `skills/`
 is the portable procedure, `extensions/pi.mjs` uses Pi's in-process API, and
-`hooks/` supplies Claude's session identity. `.claude-plugin/` and
+`hooks/` supplies Claude's session identity and agent resume handlers. `.claude-plugin/` and
 `.codex-plugin/` are the marketplace manifests. The Codex marketplace copy is
 refreshed with `python scripts/sync_titlewave.py <titlewave-checkout>` from the
 marketplace checkout.
-The Codex marketplace copy contains the runtime and skill. Shell wrappers,
-the optional statusline helper, hooks, and development checks live in the source
+The Codex marketplace copy contains the runtime, skill, and Codex resume hook. Shell wrappers,
+the optional statusline helper, other agents' hooks, and development checks live in the source
 repository; paths to those files in this README refer to a source checkout.
 
 ## References

@@ -1,7 +1,36 @@
-import { execFileSync } from 'node:child_process';
+import { execFile, execFileSync } from 'node:child_process';
+import { promisify } from 'node:util';
+import { fileURLToPath } from 'node:url';
+import { basename, join } from 'node:path';
 import { openSync, writeSync, closeSync } from 'node:fs';
 import { validateName } from './agents.mjs';
 import { nativeCommand } from './rpc.mjs';
+
+export function terminalTitleWriter(osc) {
+  let pending = Promise.resolve(), closed = false;
+  return {
+    write(name, current = () => true) {
+      validateName(name);
+      const action = async () => {
+        if (closed || !current()) return;
+        if (terminalHost() === 'osc') return osc(name);
+        const execute = promisify(execFile);
+        let node = /^node(?:\.exe)?$/i.test(basename(process.execPath)) ? process.execPath : 'node';
+        if (process.platform === 'win32' && node === 'node') {
+          if (!process.env.SystemRoot) throw new Error('Windows SystemRoot is missing from the environment.');
+          const { stdout } = await execute(join(process.env.SystemRoot, 'System32/where.exe'), ['$PATH:node.exe'], { encoding: 'utf8', timeout: 5000, windowsHide: true });
+          node = stdout.trim().split(/\r?\n/)[0];
+        }
+        if (closed || !current()) return;
+        return execute(node, [fileURLToPath(new URL('../bin/titlewave.mjs', import.meta.url)), 'terminal', name], { encoding: 'utf8', timeout: 90000, windowsHide: true });
+      };
+      const next = pending.then(action);
+      pending = next.catch(() => {});
+      return next;
+    },
+    close() { closed = true; return pending; },
+  };
+}
 
 export function terminalHost(env = process.env, herdrPane) {
   if (herdrPane !== undefined) {
