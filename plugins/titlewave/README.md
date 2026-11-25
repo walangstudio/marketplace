@@ -337,7 +337,7 @@ which layer to label; clear the outer context or omit `--terminal`.
 | Herdr | 0.9.4-preview.2026-10-14-fbd2ae23927f | Windows | Single-pane tab and pane labels read back; split tabs preserve the tab and neighboring pane labels |
 | WezTerm | 20240203-110809-5046fc22 | Windows | Native Windows tab label read back through `cli list` |
 | Windows console | Windows 10.0.26300 | Windows | OSC 2 sent through `CONOUT$`, read back through the console title API |
-| Terminal.app | 2.12.7 | macOS 12.7.6, Intel | Real native window title, literal text, replacement, and invalid-input preservation |
+| Terminal.app | 2.12.7 | macOS 12.7.6, Intel | Real native window title, literal text, replacement, invalid-input preservation, detached processes, and resume restoration |
 
 Herdr requires the `pane get`, `pane rename`, `tab get` (including `pane_count`),
 and `tab rename` APIs available in the 0.9.4 preview listed above. A failed tab
@@ -379,10 +379,9 @@ custom Node path, open a fresh Terminal window and run
 `TITLEWAVE_NODE=/absolute/path/node test/macos.command` from the checkout.
 Allow the Terminal automation prompt if macOS asks. Evidence is written to
 `.evidence/macos-terminal-<pid>.json`; check both its results and cleanup status.
-The initial three native cases passed. The current five-case suite adds detached
-processes and resume restoration; its GUI rerun is blocked by AppleEvent timeouts
-and remains unverified. An earlier native macOS build and 48-unit-test run passed;
-the final 50-test revision still needs a native macOS rerun.
+All five native cases passed on macOS 12.7.6, Intel, with Terminal.app 2.12.7
+and Node 22.23.1, including detached processes and resume restoration. The test
+window closed successfully. The same Mac passed the build and all 50 unit tests.
 
 `powershell -NoProfile -File test/windows.ps1` checks temporary Herdr tabs with
 stale daemon context, explicit targets and split panes, plus a temporary WezTerm window. The Windows console check uses its own hidden

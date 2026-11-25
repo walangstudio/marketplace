@@ -7,7 +7,7 @@
 - Add an OpenCode client-side TUI plugin that follows the selected session without trusting shared server events.
 - Reuse terminal targeting and split-pane protections; refuse stale Codex daemon environments without blocking resume.
 - Read native saved titles without model calls, transcript edits, or a pane cache.
-- Exercise restoration through the Linux terminal suites and native Windows Herdr, WezTerm, and console checks.
+- Exercise restoration through the Linux terminal suites, native Windows Herdr, WezTerm, and console checks, and native macOS Terminal.app.
 
 ## 0.1.7 - 2026-11-23
 
