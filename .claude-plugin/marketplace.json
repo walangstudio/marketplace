@@ -132,6 +132,16 @@
       "description": "Lint your repo's delusions: find notes, plans, specs, and agent instructions that no longer match the code, prove each against git history with an independent checker, and archive what you approve. A hook keeps agents out of the archive. Requires Node 22+ and git.",
       "homepage": "https://github.com/walangstudio/delulint",
       "license": "MIT"
+    },
+    {
+      "name": "gozip",
+      "source": {
+        "source": "github",
+        "repo": "walangstudio/gozip"
+      },
+      "description": "goZip: a side chat beside your session. Ask Fable, Opus, Sonnet or Haiku about the work while Claude keeps going: a read-only fork of the session that streams its answers and stays current with main's progress. Send notes, queued prompts or interrupts back to the main chat. A mod: requires Claude Code 2.1.332+ with CLAUDE_CODE_ENABLE_FUNCTION_HOOKS=1.",
+      "homepage": "https://github.com/walangstudio/gozip",
+      "license": "MIT"
     }
   ]
 }
