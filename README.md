@@ -50,6 +50,7 @@ live under `plugins/`. The Claude catalog remains in
 | [conClaude](https://github.com/walangstudio/conclaude) | Side pane of every prompt you sent with a Haiku TL;DR of each answer; press one to jump back to it. Requires Claude Code 2.1.292+ with `CLAUDE_CODE_ENABLE_FUNCTION_HOOKS=1`. |
 | [whileYouWait](https://github.com/walangstudio/whileYouWait) | Let an agent improve code in rounds against sealed checks it can't touch; only verified improvements are kept. Requires Node 18+ and git. |
 | [delulint](https://github.com/walangstudio/delulint) | Find notes, plans, and agent instructions that no longer match the code, prove each against git history, and archive what you approve. Claude Code and Codex. Requires Node 22+ and git. |
+| [goZip](https://github.com/walangstudio/gozip) | Side chat with Fable, Opus, Sonnet or Haiku about your session while Claude keeps working; send notes, queued prompts or interrupts to the main chat. Requires Claude Code 2.1.332+ with `CLAUDE_CODE_ENABLE_FUNCTION_HOOKS=1`. |
 
 ## Add a plugin
 
